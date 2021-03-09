@@ -1,7 +1,4 @@
 /*jshint esversion: 6 */
-
-const { text } = require("express");
-
 /* 改行が削除されるので、//は使わない */
 try{
 let log = s =>{
