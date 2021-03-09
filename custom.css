@@ -1,0 +1,193 @@
+/* 画像 ミディアム 縦幅 1枚 */
+a.js-media-image-link.block.med-link.media-item.media-size-medium.is-zoomable{
+    height: 200px;
+}
+/* 画像 ミディアム 縦幅 複数枚 */
+html.dark .is-narrow-columns .media-size-medium{
+    height: 200px !important;
+}
+
+/* textarea リプライ 小画面 */
+.js-inline-reply .compose-text-container>textarea.js-compose-text{
+    background-color: black !important;
+    color: #aaa;
+}
+/* textarea wrap リプライ 小画面 */
+.js-inline-reply .compose-text-container{
+    background-color: #181818 !important;
+    border:1px solid #777;
+}
+
+/* textarea ツイート、リプライ全画面 */
+.js-compose-header.compose-header~.compose-text-container>textarea.js-compose-text{
+    background-color: black !important;
+    color: #aaa;
+}
+/* textarea ツイート */
+.js-compose-header.compose-header~.js-in-reply-to.compose-reply-tweet.is-hidden+.compose-text-container>textarea.js-compose-text{
+    height: calc(100% - 21px) !important;
+}
+/* textarea リプライ全画面 */
+.js-compose-header.compose-header~.js-in-reply-to.compose-reply-tweet:not(.is-hidden)+.compose-text-container>textarea.js-compose-text{
+    height: calc(100% - 42px) !important;
+}
+/* textarea 範囲選択 */
+textarea.js-compose-text::selection{
+    color:black !important;
+    background-color: white !important;
+}
+/* textarea wrap ツイート、リプライ全画面 */
+.js-compose-header.compose-header~.compose-text-container{
+    background-color: #181818 !important;
+    border:1px solid #777;
+}
+/* textarea wrap ツイート */
+.js-compose-header.compose-header~.js-in-reply-to.compose-reply-tweet.is-hidden+.compose-text-container{
+    top:-85px;
+    height: 280px !important;
+}
+/* textarea wrap リプライ全画面 */
+.js-compose-header.compose-header~.js-in-reply-to.compose-reply-tweet:not(.is-hidden)+.compose-text-container{
+    top: -80px;
+    height: 180px !important;
+}
+
+
+/* ツイート、リプライ全画面 「Tweet」テキスト */
+.js-compose-message-header.compose-text-title{
+    display: none;
+}
+/* ツイート、リプライ全画面 垢選択wrap */
+.compose-accounts.compose-accounts.compose-accounts.compose-accounts.compose-accounts.compose-accounts{
+    margin-bottom: 0 !important;
+}
+/* ツイート、リプライ全画面 ツイートボタン */
+.js-compose-header.compose-header ~ .js-account-safeguard-checkbox ~ .cf{
+    position: absolute;
+    top:340px;
+    left:363px;
+}
+/* ツイートボタン 文字変更*/
+button.js-send-button.js-send-button.js-send-button:before{
+    content: 'ツイート';
+    font-size: 14px;
+}
+button.js-send-button.js-send-button.js-send-button{
+    width: 82px;
+    font-size: 0 !important;
+}
+/* ツイート、リプライ全画面 垢選択上「From」、右端ボタン */
+.js-compose-header + .js-inline-confirmation + .cf{
+    display:none;
+}
+/* ツイート、リプライ全画面 垢選択 垢一覧 */
+.js-account-list{
+    position: relative;
+    top:266px;
+}
+/* リプライ全画面 返信先ツイ */
+.js-in-reply-to.compose-reply-tweet{
+    top: -85px;
+}
+/* Schedule Tweet、Direct message ツイート */
+.js-in-reply-to.compose-reply-tweet.is-hidden ~ .js-scheduler,
+.js-in-reply-to.compose-reply-tweet.is-hidden ~ .js-tweet-type-button
+{
+    position: relative;
+    top: -0px;
+}
+/* Schedule Tweet、Direct message 全画面リプライ*/
+.js-in-reply-to.compose-reply-tweet:not(is-hidden) ~ .js-scheduler,
+.js-in-reply-to.compose-reply-tweet:not(is-hidden) ~ .js-tweet-type-button{
+    position: relative;
+    top: -0px;
+}
+/* 表示できない絵文字 */
+img.emoji[src='']{
+    display:none;
+}
+#open-modal .js-modal-panel{
+    overflow: hidden;
+}
+#open-modal .js-media-image-link{
+    visibility: hidden;
+}
+/* セレクタを繰り返して詳細度を上げている */
+#open-modal .js-embeditem.med-embeditem.js-embeditem.med-embeditem.js-embeditem.med-embeditem{
+    overflow: hidden;
+    height: calc(100% + 58px);
+    top: -60px !important;
+}
+#open-modal .js-med-tweet.med-tweet.js-med-tweet.med-tweet{
+    bottom:0 !important;
+    background-color: rgba(0,0,0,0.75);
+    text-shadow: 0 0 2px black;
+    z-index: 2;
+}
+#open-modal .img-scroll-outer{
+    position: absolute;
+    top: 60px;
+    z-index: 1;
+}
+#open-modal .js-media-gallery-prev,
+#open-modal .js-media-gallery-next{
+    z-index: 2;
+}
+#open-modal .img-scroll-inner{
+    position: absolute;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+#open-modal .img-size-elm{
+    position: absolute;
+    z-index: -1;
+    visibility: hidden;
+}
+
+/* FONT SIZE Smallest */
+html.txt-size--12 article .tweet-body{
+    position: relative;
+    top: -15px;
+    padding-top: 15px;
+    margin-bottom: -15px;
+}
+/* FONT SIZE Small */
+html.txt-size--13 article .tweet-body{
+    position: relative;
+    top: -16px;
+    padding-top: 16px;
+    margin-bottom: -16px;
+}
+/* FONT SIZE Medium */
+html.txt-size--14 article .tweet-body{
+    position: relative;
+    top: -18px;
+    padding-top: 18px;
+    margin-bottom: -18px;
+}
+/* FONT SIZE Large */
+html.txt-size--15 article .tweet-body{
+    position: relative;
+    top: -19px;
+    padding-top: 19px;
+    margin-bottom: -19px;
+}
+/* FONT SIZE Large */
+html.txt-size--16 article .tweet-body{
+    position: relative;
+    top: -20px;
+    padding-top: 20px;
+    margin-bottom: -20px;
+}
+#open-modal .js-media-gallery-prev,
+#open-modal .js-media-gallery-next,
+#open-modal .js-med-tweet.med-tweet,
+#open-modal .mdl-dismiss.js-dismiss.mdl-dismiss-media.mdl-btn-media
+{
+    opacity: 0;
+}
+
+.media-caret{
+    display: none !important;
+}
