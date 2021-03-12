@@ -31,10 +31,22 @@ html.dark .is-narrow-columns .media-size-medium{
 .js-compose-header.compose-header~.js-in-reply-to.compose-reply-tweet:not(.is-hidden)+.compose-text-container>textarea.js-compose-text{
     height: calc(100% - 42px) !important;
 }
-/* textarea 範囲選択 */
-textarea.js-compose-text::selection{
-    color:black !important;
-    background-color: white !important;
+/* 範囲選択 */
+.js-compose-text.compose-text.js-compose-text.compose-text.js-compose-text.compose-text::selection,
+.js-tweet-text.tweet-text.js-tweet-text.tweet-text.js-tweet-text.tweet-text::selection,
+.js-quoted-tweet-text.js-quoted-tweet-text.js-quoted-tweet-text.js-quoted-tweet-text::selection,
+.tweet-context.tweet-context.tweet-context::selection
+{
+
+    color:white !important;
+    background-color: #6bf !important;
+}
+.js-compose-text.compose-text.js-compose-text.compose-text.js-compose-text.compose-text,
+.js-tweet-text.tweet-text.js-tweet-text.tweet-text.js-tweet-text.tweet-text,
+.js-tweet-header.tweet-header.js-tweet-header.tweet-header.js-tweet-header.tweet-header,
+.tweet-context.tweet-context.tweet-context
+{
+    color: #aaa !important;
 }
 /* textarea wrap ツイート、リプライ全画面 */
 .js-compose-header.compose-header~.compose-text-container{
@@ -51,8 +63,6 @@ textarea.js-compose-text::selection{
     top: -80px;
     height: 180px !important;
 }
-
-
 /* ツイート、リプライ全画面 「Tweet」テキスト */
 .js-compose-message-header.compose-text-title{
     display: none;
@@ -89,6 +99,14 @@ button.js-send-button.js-send-button.js-send-button{
 .js-in-reply-to.compose-reply-tweet{
     top: -85px;
 }
+.js-quote-tweet-holder.js-quote-tweet-holder.js-quote-tweet-holder{
+    position: relative !important;
+    background-color: black !important;
+    color: #aaa !important;
+    margin-top:-20px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
 /* Schedule Tweet、Direct message ツイート */
 .js-in-reply-to.compose-reply-tweet.is-hidden ~ .js-scheduler,
 .js-in-reply-to.compose-reply-tweet.is-hidden ~ .js-tweet-type-button
@@ -109,7 +127,7 @@ img.emoji[src='']{
 #open-modal .js-modal-panel{
     overflow: hidden;
 }
-#open-modal .js-media-image-link{
+#open-modal .js-media-image-link:not(.mdl-inner a){
     visibility: hidden;
 }
 /* セレクタを繰り返して詳細度を上げている */

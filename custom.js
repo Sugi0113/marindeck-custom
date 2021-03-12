@@ -59,8 +59,8 @@ document.getElementById('open-modal').addEventListener('DOMNodeInserted', functi
         moveImg.style.transform = `scale(${Math.max(_zoom, MINZOOM)})`;
         return _zoom;
     },
-    checkPos = (moveX, moveY) => {
-        let {x, y, right, bottom, width, height} = moveRect(), ratio = imgWidth/imgHeight;
+    checkPos = (moveX, moveY, rect=undefined) => {
+        let {x, y, right, bottom, width, height} = rect||moveRect(), ratio = imgWidth/imgHeight;
         if(ratio > width/height){
             y += (height-width/ratio)/2;
             bottom -= (height-width/ratio)/2;
@@ -91,12 +91,12 @@ document.getElementById('open-modal').addEventListener('DOMNodeInserted', functi
             scrollTo(getImgOffset(selectedImg));
             selectedImg = (selectedImg+imgArr.length)%imgArr.length;
             offset = getImgOffset(selectedImg);
-            let timeout = setTimeout(()=>{
+            let timeout = setTimeout(()=>{try{
                 animDelay.splice(animDelay.indexOf(timeout), 1);
                 canMove = true;
                 scrollDiv.style.transition = '';
                 scrollTo(offset);
-            }, duration*1000);
+            }catch(err){alert(e.stack);}}, duration*1000);
             animDelay.push(timeout);
         } else {
             selectedImg = (selectedImg+imgArr.length)%imgArr.length;
@@ -111,42 +111,44 @@ document.getElementById('open-modal').addEventListener('DOMNodeInserted', functi
         }
         let duration;
         if(smooth){
+            canMove = false;
             duration =  Math.round(Math.sqrt(pos.y/(WIDTH+IMG_GAP))*15)/100;
             moveImg.style.transition = `top ${duration}s linear`;
-            let timeout = setTimeout(()=>{
+            let timeout = setTimeout(()=>{try{
+                canMove = true;
+                animDelay.splice(animDelay.indexOf(timeout), 1);
                 moveImg.style.transition = '';
-            }, duration*1000);
+            }catch(err){alert(e.stack);}}, duration*1000);
             animDelay.push(timeout);
         }
         pos = {x:0, y:0};
         setImgPos(0, 0);
         scrollImg(0, smooth);
     },
-    switchHideUI = ()=>{
-        try{
-            hideUI = !hideUI;
-            for(const el of hideElm)
-                el.style.setProperty('display', hideUI?'none':'', 'important');
-        }catch(err){alert(err.stack);}
-    }, 
+    click,
     touchstart = e =>{
         try{
             clearTimeout(longtap);
-            if(e.touches.length === 1)
+            if(e.touches.length === 1){
+                click = {x:e.touches[0].clientX, y:e.touches[0].clientY};
                 longtap = setTimeout(()=>{try{
                     outer.getElementsByClassName('js-media-image-link')[0].click();
                 }catch(err){alert(err.stack);}}, 500);
+            } else click = undefined;
             for(const touch of e.changedTouches){
                 touches[touch.identifier] = {
                     x: touch.clientX,  
                     y: touch.clientY,
                 };
             }
+            vx=0; vy=0; vReset = Date.now();
             if(_zoom === 1 && e.touches.length === 2) resetSelectedImagePos(true, true);
         }catch(err){alert(err.stack);}
     },
     touchmove = e =>{
-        if(outer.innerHTML === '' || !canMove) return;
+        if(outer.innerHTML === '') return;
+        click = undefined;
+        if(!canMove) return;
         try{
             clearTimeout(longtap);
             if(e.touches.length === 1){/* 移動 */
@@ -199,9 +201,60 @@ document.getElementById('open-modal').addEventListener('DOMNodeInserted', functi
             }
         }catch(err){alert(err.stack);}
     },
-    touchend = e =>{
+    switchHideUI = ()=>{
         try{
+            hideUI = !hideUI;
+            for(const el of hideElm)
+                el.style.setProperty('display', hideUI?'none':'', 'important');
+        }catch(err){alert(err.stack);}
+    },
+    clickTimeout,
+    touchend = e =>{try{
         clearTimeout(longtap);
+        if(click){
+            if(e.target.className !== 'img-scroll-inner') return;
+            if(!canMove) return;
+            clearTimeout(clickTimeout);
+            if(clickTimeout === undefined){
+                clickTimeout = setTimeout(()=>{try{
+                    switchHideUI();
+                    clickTimeout = undefined;
+                }catch(err){alert(err.stack);}}, 250);
+            } else {
+                let duration;
+                if(_zoom < 1.5){
+                    duration = Math.sqrt(2-_zoom)*0.08;
+                    canMove = false;
+                    moveImg.style.transition = `transform ${duration}s linear, left ${duration}s linear, top ${duration}s linear`;
+                    pos.x -= click.x-WIDTH/2;
+                    if(imgHeight/imgWidth*WIDTH*2 > HEIGHT){
+                        let rect = moveRect();
+                        pos.y -= checkPos(click.x-WIDTH/2, click.y-HEIGHT/2, new DOMRect(
+                            rect.x-rect.width/2,
+                            rect.y-rect.height/2,
+                            rect.width*2,
+                            rect.height*2
+                        )).y;
+                    }
+                    _zoom = 2;
+                    zoom(1);
+                    setImgPos(pos.x, pos.y);
+                } else {
+                    duration = Math.sqrt(_zoom-1)*0.08;
+                    canMove = false;
+                    moveImg.style.transition = `transform ${duration}s linear, left ${duration}s linear, top ${duration}s linear`;
+                    resetSelectedImagePos(true, false);
+                }
+                let timeout = setTimeout(()=>{try{
+                    canMove = true;
+                    animDelay.splice(animDelay.indexOf(timeout), 1);
+                    moveImg.style.transition = '';
+                }catch(err){alert(err.stack);}}, duration*1000);
+                animDelay.push(timeout);
+                clickTimeout = undefined;
+            }
+            return;
+        }
         for(const touch of e.changedTouches){
             if(touches[touch.identifier]) delete touches[touch.identifier];
         }
@@ -218,19 +271,14 @@ document.getElementById('open-modal').addEventListener('DOMNodeInserted', functi
         } else if (e.touches.length <= 1 && _zoom < 1){
             canMove = false;
             _zoom = MINZOOM;
-            void function f(){
-                try{
-                _zoom = Math.min(_zoom+0.02, 1);
-                moveImg.style.transform = `scale(${_zoom})`;
-                if(_zoom < 1) setTimeout(() => {try{
-                        f();
-                    }catch(err){alert(err.stack);}}, 5);
-                else {
-                    zoom(1);
-                    canMove = true;
-                }
-                }catch(err){alert(err.stack);}
-            }();
+            moveImg.style.transition = 'transform 0.03s linear';
+            let timeout = setTimeout(()=>{try{
+                animDelay.splice(animDelay.indexOf(timeout), 1);
+                canMove = true;
+                moveImg.style.transform = '';
+            }catch(err){alert(err.stack);}});
+            animDelay.push(timeout);
+            _zoom = 1; zoom(1);
         }
         }catch(err){alert(err.stack);}
     },
@@ -355,7 +403,7 @@ document.getElementById('open-modal').addEventListener('DOMNodeInserted', functi
             inner.style.width = `${WIDTH}px`;
             inner.style.height = `${HEIGHT}px`;
             inner.style.backgroundImage = 'url(\"https:/'+`/pbs.twimg.com/media/${imgArr[(i+imgArr.length)%imgArr.length]}?format=${typeArr[(i+typeArr.length)%typeArr.length]}&name=large\")`;
-            inner.addEventListener('click', switchHideUI);
+            inner.addEventListener('click', click);
             setElmPos(inner, getImgOffset(i), 0);
             frag.appendChild(inner);
             if(i === selectedImg){
@@ -392,7 +440,7 @@ document.getElementById('open-modal').addEventListener('DOMNodeInserted', functi
             rightBtn.removeEventListener('click', rightBtnClick);
             let inner = document.getElementsByClassName('img-scroll-inner');
             while(inner.length){
-                inner[0].removeEventListener('click', switchHideUI);
+                inner[0].removeEventListener('click', click);
             }
             touchElm.removeEventListener('touchstart', touchstart);
             for(const evName of ['touchend', 'touchcancel']){
@@ -409,7 +457,7 @@ document.addEventListener('click', function(e){try{
         alert(`${tgt.src}\n${tgt.tagName} ${tgt.className}`);
         imgArr = [getImgID(tgt.src)];
         typeArr = [tgt.src.match(/format=[a-zA-Z]+/)[0].replace('format=', '')];
-    }else if(tgt.className.match('js-media-image-link') && !tgt.getElementsByTagName('img')[0]){
+    }else if(tgt.className.match('js-media-image-link') && !tgt.getElementsByClassName('video-overlay').length && !tgt.getElementsByTagName('img').length){
         imgArr = [];
         for(const el of tgt.parentNode.parentNode.getElementsByClassName('js-media-image-link')){
             imgArr.push(getImgID(el.style.backgroundImage));
@@ -417,4 +465,4 @@ document.addEventListener('click', function(e){try{
         }
     }
 }catch(err){alert(err.stack);}});
-}catch(e){alert(e.stack);}
+}catch(err){alert(err.stack);}
