@@ -1,10 +1,18 @@
 /*jshint esversion: 6 */
-/* 改行が削除されるので、//は使わない */
 try{
 let log = s =>{
     let tgt = document.getElementById('open-modal')?.getElementsByClassName('js-med-tweet med-tweet')[0]?.getElementsByClassName('js-tweet-text tweet-text')[0];
     if(tgt) tgt.innerText = s;
 };
+document.addEventListener('keydown', e => {
+    let tgt = e.target;
+    if(
+        tgt.tagName === 'TEXTAREA'
+    &&  (e.key === 'ArrowLeft' && !e.shiftKey && !tgt.selectionStart && !tgt.selectionEnd)
+    ||  (e.key === 'ArrowRight' && !e.shiftKey && tgt.selectionStart === tgt.value.length && tgt.selectionEnd === tgt.value.length)
+    )
+        e.preventDefault();
+}, {passive:false});
 let getImgID = s => s.match(/\/media\/[\w\-]+/)[0].replace('/media/','');
 var imgArr = [], typeArr = [];
 document.querySelector('.js-drawer.drawer[data-drawer=\'compose\']').addEventListener('DOMNodeInserted', function(e){try{
@@ -208,17 +216,17 @@ document.getElementById('open-modal').addEventListener('DOMNodeInserted', functi
                 el.style.setProperty('display', hideUI?'none':'', 'important');
         }catch(err){alert(err.stack);}
     },
-    clickTimeout,
+    dblClickTimeout,
     touchend = e =>{try{
         clearTimeout(longtap);
         if(click){
             if(e.target.className !== 'img-scroll-inner') return;
             if(!canMove) return;
-            clearTimeout(clickTimeout);
-            if(clickTimeout === undefined){
-                clickTimeout = setTimeout(()=>{try{
-                    switchHideUI();
-                    clickTimeout = undefined;
+            clearTimeout(dblClickTimeout);
+            switchHideUI();
+            if(dblClickTimeout === undefined){
+                dblClickTimeout = setTimeout(()=>{try{
+                    dblClickTimeout = undefined;
                 }catch(err){alert(err.stack);}}, 250);
             } else {
                 let duration;
@@ -251,7 +259,7 @@ document.getElementById('open-modal').addEventListener('DOMNodeInserted', functi
                     moveImg.style.transition = '';
                 }catch(err){alert(err.stack);}}, duration*1000);
                 animDelay.push(timeout);
-                clickTimeout = undefined;
+                dblClickTimeout = undefined;
             }
             return;
         }
