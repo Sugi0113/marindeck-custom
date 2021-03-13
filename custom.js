@@ -460,12 +460,7 @@ document.getElementById('open-modal').addEventListener('DOMNodeInserted', functi
 }catch(err){alert(err.stack);}});
 document.addEventListener('click', function(e){try{
     let tgt = e.target;
-    if(tgt.className === 'media-img' && tgt.parentElement.className.match('js-media-image-link')){
-        alert(`このif文ってどういうとき入るんだっけ？\nclassName: ${tgt.className}`);
-        alert(`${tgt.src}\n${tgt.tagName} ${tgt.className}`);
-        imgArr = [getImgID(tgt.src)];
-        typeArr = [tgt.src.match(/format=[a-zA-Z]+/)[0].replace('format=', '')];
-    }else if(tgt.className.match('js-media-image-link') && !tgt.getElementsByClassName('video-overlay').length && !tgt.getElementsByTagName('img').length){
+    if(tgt.className.match('js-media-image-link') && !tgt.getElementsByClassName('video-overlay').length && !tgt.getElementsByTagName('img').length){
         imgArr = [];
         for(const el of tgt.parentNode.parentNode.getElementsByClassName('js-media-image-link')){
             imgArr.push(getImgID(el.style.backgroundImage));
